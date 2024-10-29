@@ -16,6 +16,8 @@ jobs:
         qt_arch: [clang_64]
     env:
       targetName: hap_instaler
+      BUILD_TYPE: Release
+
     steps:
       # 安装QT
       - name: Install Qt
@@ -32,9 +34,9 @@ jobs:
       # 构建
       - name: build macos
         run: |
-          mkdir build
-          cd build
-          cmake ..
+          mkdir -p ${{github.workspace}}/build
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+          cd ${{github.workspace}}/build
           make
     
       # 打包

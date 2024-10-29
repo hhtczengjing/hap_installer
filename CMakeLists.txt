@@ -22,9 +22,9 @@ set(PROJECT_SOURCES
 )
 
 IF (WIN32)
-	# Windows
+    # Windows
 ELSEIF (APPLE)
-	# Apple
+    # Apple
     set(MACOSX_BUNDLE true)
     set(MACOSX_BUNDLE_BUNDLE_NAME "Hap安装器")
     set(MACOSX_BUNDLE_GUI_IDENTIFIER "com.devzeng.hap_installer")
@@ -33,8 +33,6 @@ ELSEIF (APPLE)
     set(MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0")
     set(MACOSX_BUNDLE_BUNDLE_VERSION "1.0")
 
-    set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/AppIcon.icns" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-
     set(QUAZIP_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/quazip/mac/include")
     set(QUAZIP_LIBS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/quazip/mac/libs")
     set(QUAZIP_LIBS libquazip.1.dylib)
@@ -42,8 +40,13 @@ ELSEIF (APPLE)
     link_directories(${QUAZIP_LIBS_DIR})
 ENDIF ()
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/hap_installer.app/Contents/MacOS/hdc_cli)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/hdc_cli DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/hap_installer.app/Contents/MacOS/)
+IF (WIN32)
+    # Windows
+ELSEIF (APPLE)
+    # Apple
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/hap_installer.app/Contents/MacOS/hdc_cli)
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/hdc_cli DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/hap_installer.app/Contents/MacOS/)
+ENDIF ()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(hap_installer
@@ -76,6 +79,10 @@ endif()
 
 target_link_libraries(hap_installer Qt${QT_VERSION_MAJOR}::Widgets ${QUAZIP_LIBS})
 
+if(APPLE)
+    set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/AppIcon.icns" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+endif()
+
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
@@ -83,10 +90,7 @@ if(${QT_VERSION} VERSION_LESS 6.1.0)
   set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.devzeng.hap_installer)
 endif()
 set_target_properties(hap_installer PROPERTIES
-    ${BUNDLE_ID_OPTION}
     RESOURCE "./AppIcon.icns"
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
