@@ -55,3 +55,4 @@ compile_commands.json
 
 build/*
 hdc_cli/*
+!quazip/**/*.dylib
