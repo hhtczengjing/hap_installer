@@ -1,0 +1,3 @@
+[submodule "hdc_cli"]
+	path = hdc_cli
+	url = https://github.com/hhtczengjing/hdc_cli.git
